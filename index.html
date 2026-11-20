@@ -25,6 +25,8 @@
   --mint:#A9E5CB; --mint-ink:#0D3A2A;
   --blue:#AFCBFF; --blue-ink:#0E2A57;
   --night:#242C46; --night-ink:#FBF1E1; --night-acc:#FFC49A;
+  --sun:#FFE08A; --sun-ink:#4A3600;
+  --lilac:#D8C8FF; --lilac-ink:#2D1A5E;
   --display:'Alexandria','Plex',system-ui,sans-serif; --body:'Plex','Segoe UI',Tahoma,system-ui,sans-serif;
   color-scheme:light;
 }
@@ -51,6 +53,25 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .c-money{background:var(--mint);color:var(--mint-ink)}
 .c-log{background:var(--blue);color:var(--blue-ink)}
 .c-close{background:var(--night);color:var(--night-ink)}
+.c-goal{background:var(--sun);color:var(--sun-ink)}
+.c-week{background:var(--lilac);color:var(--lilac-ink)}
+.c-wrap{background:linear-gradient(165deg,#FF9F8A 0%,#FFC49A 45%,#C9B8FF 100%);color:#2B1630}
+.card[hidden]{display:none}
+.c-goal .kb.main span{color:var(--sun)} .c-week .kb.main span{color:var(--lilac)} .c-wrap .kb.main span{color:#FFC49A}
+.c-goal .chip.on span{color:var(--sun)}
+.mdots{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.mdots i{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.5)}
+.mdots i.on{background:var(--sun-ink)}
+.mdots i.today{outline:2px solid var(--sun-ink);outline-offset:1px}
+.wline{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-bottom:1px solid rgba(43,22,48,.12)}
+.wline:last-child{border-bottom:0}
+.wline .k{font-size:.85rem;opacity:.75}
+.wline .v{font-family:var(--display);font-weight:700;font-size:1.35rem;line-height:1.3}
+.quote{font-family:var(--display);font-weight:600;font-size:1.05rem;background:rgba(255,255,255,.4);border-radius:18px;padding:12px 14px}
+.c-close .say2{width:100%;border:0;border-radius:16px;background:rgba(255,255,255,.1);color:var(--night-ink);padding:12px 14px;min-height:56px;resize:none;outline:none}
+.c-close .chip.on{background:var(--night-acc);color:var(--night)}
+.fund{display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,.45);border-radius:18px;padding:12px 14px}
+.c-week .in{background:rgba(255,255,255,.7);border-color:transparent}
 .c-close::before{background:rgba(255,196,154,.12)}
 .pill{align-self:flex-start;background:rgba(255,255,255,.55);border-radius:99px;padding:4px 12px;font-size:.8rem;font-weight:600}
 .c-close .pill{background:rgba(255,255,255,.1)}
@@ -79,7 +100,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .chip.on span{color:var(--apricot)}
 .c-close .chip{background:rgba(255,255,255,.1)}
 .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.mini div{background:rgba(255,255,255,.45);border-radius:18px;padding:10px 12px}
+.mini>div{background:rgba(255,255,255,.45);border-radius:18px;padding:10px 12px}
 .mini .v{font-family:var(--display);font-weight:600;font-size:1rem;font-variant-numeric:tabular-nums}
 .mini .l{font-size:.78rem;opacity:.75}
 .bars{display:flex;flex-direction:column;gap:8px}
@@ -104,7 +125,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 /* nav */
 nav{display:flex;align-items:center;gap:10px;padding:6px 20px 12px}
 .tabs{flex:1;display:flex;background:#fff;border-radius:22px;padding:5px;gap:4px;box-shadow:0 1px 0 var(--line)}
-.tab{flex:1;border:0;background:transparent;border-radius:17px;min-height:46px;font-size:.84rem;color:var(--muted);font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tab{flex:1;border:0;background:transparent;border-radius:17px;min-height:46px;font-size:.78rem;padding:0 2px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .tab i{width:8px;height:8px;border-radius:50%;background:var(--dot)}
 .tab.on{background:var(--dot);color:var(--ink)}
 .tab.on i{background:var(--ink)}
@@ -155,7 +176,10 @@ nav{display:flex;align-items:center;gap:10px;padding:6px 20px 12px}
   </header>
   <div id="banner"></div>
   <main class="deck" id="deck">
+    <section class="card c-week" id="week" aria-label="قعدة الأحد" hidden></section>
+    <section class="card c-wrap" id="wrap" aria-label="ملخص الشهر" hidden></section>
     <section class="card c-step" id="step" aria-label="خطوة النهارده"></section>
+    <section class="card c-goal" id="goal" aria-label="هدف الشهر"></section>
     <section class="card c-money" id="money" aria-label="فلوسي"></section>
     <section class="card c-log" id="log" aria-label="سجّل"></section>
     <section class="card c-close" id="close" aria-label="قفلة اليوم"></section>
@@ -163,6 +187,7 @@ nav{display:flex;align-items:center;gap:10px;padding:6px 20px 12px}
   <nav>
     <div class="tabs" role="tablist">
       <button class="tab" style="--dot:var(--apricot)" data-act="goto" data-to="step" type="button"><i></i>خطوة</button>
+      <button class="tab" style="--dot:var(--sun)" data-act="goto" data-to="goal" type="button"><i></i>هدفي</button>
       <button class="tab" style="--dot:var(--mint)" data-act="goto" data-to="money" type="button"><i></i>فلوسي</button>
       <button class="tab" style="--dot:var(--blue)" data-act="goto" data-to="log" type="button"><i></i>سجّل</button>
       <button class="tab" style="--dot:var(--night-acc)" data-act="goto" data-to="close" type="button"><i></i>القفلة</button>
@@ -186,6 +211,7 @@ function toLatin(s){ return String(s ?? '').replace(/[٠-٩]/g, d => '٠١٢٣٤
 function numIn(v){ const x = parseFloat(toLatin(v)); return isFinite(x) ? x : null; }
 function norm(s){ return toLatin(s).replace(/ـ/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase(); }
 const nf = new Intl.NumberFormat('ar-EG', {maximumFractionDigits: 0});
+const plural = (n, w) => { const W = {day:['يوم واحد','يومين','أيام','يوم'], step:['خطوة واحدة','خطوتين','خطوات','خطوة']}[w]; if(n === 1) return W[0]; if(n === 2) return W[1]; return n0(n) + ' ' + (n >= 3 && n <= 10 ? W[2] : W[3]); };
 const nf2 = new Intl.NumberFormat('ar-EG', {maximumFractionDigits: 2});
 const n0 = n => nf.format(Math.round(Number(n) || 0));
 const money = (n, cur) => cur === 'USD' ? nf2.format(r2(n)) + ' دولار' : n0(n) + ' جنيه';
@@ -239,6 +265,37 @@ function monthNums(mk = today().slice(0, 7)){
 const dayTotal = d => D.tx.filter(t => t.date === d && t.kind === 'expense').reduce((s, t) => s + egp(t), 0);
 function lastLogged(){ let m = ''; D.tx.forEach(t => { if(t.date > m && t.date <= today()) m = t.date; }); (ST().zeroDays || []).forEach(d => { if(d > m) m = d; }); return m; }
 function loggedDay(d){ return D.tx.some(t => t.date === d) || (ST().zeroDays || []).includes(d); }
+
+/* ---------- monthly goal ---------- */
+const GOALS = ['الإنجليزي للشغل والبيت', 'جودة شغل التسويق', 'أدوات الذكاء الاصطناعي', 'الجيم والصحة', 'سالفة وفرص الشغل', 'وقت أكتر مع العيلة'];
+const GOAL_STEPS = [
+  [/انجليزي|english/, ['اشرح خدمة الإعلانات بالإنجليزي في دقيقتين وسجّل صوتك', 'اكتب رد واحد لعميل بالإنجليزي بدل العربي', 'اتفرج ١٠ دقايق على فيديو تسويق بالإنجليزي وطلّع ٣ كلمات جديدة', 'اقرا قصة إنجليزي قصيرة ليحيى وسيرين', 'اكتب كابشن بوست بالإنجليزي لعميل حقيقي', 'اتكلم مع نفسك ٥ دقايق بالإنجليزي عن يومك في الشغل']],
+  [/تسويق|ماركتنج/, ['راجع آخر تسليم لعميل وطلّع حاجة واحدة تتحسن', 'اقرا case study واحدة وطلّع فكرة تنفع عميل', 'حلل إعلان منافس لعميل في ١٠ دقايق', 'اكتب ٣ هوكات جديدة لعميل واحد', 'شوف أرقام حملة واحدة وحدد قرار واحد']],
+  [/ذكاء|ai|ادوات/, ['جرّب أداة واحدة على تسليم حقيقي النهارده', 'اعمل برومبت واحد تقدر تعيد استخدامه في الشغل', 'خلّي أداة تعمل أول مسودة لحاجة بتعملها كل أسبوع', 'اتفرج ١٠ دقايق على شرح أداة وجرّبها على عميل']],
+  [/جيم|صحه|رياضه/, ['٢٠ دقيقة جيم أو مشي', 'تمرين ١٠ دقايق في البيت', 'نام بدري نص ساعة النهارده', 'امشي مكالمة شغل بدل ما تقعد']],
+  [/سالفه|فرص|شغل/, ['اكتب بوست واحد لسالفة', 'ابعت رسالة لعميل محتمل واحد', 'حدّث جزء واحد في موقع سالفة أو البروفايل', 'اكتب فكرة خدمة جديدة في ٥ سطور']],
+  [/عيله|اسره|الولاد|بيت/, ['١٠ دقايق لعب مع يحيى وسيرين من غير موبايل', 'اسأل مراتك عن يومها واسمع للآخر', 'اعمل حاجة صغيرة في البيت كانت مستنية', 'كلّم جدتك ٥ دقايق']],
+];
+function goalSuggestions(title){ const t = norm(title || ''); for(const [re, list] of GOAL_STEPS) if(re.test(t)) return list; return ['١٠ دقايق في «' + title + '» بنتيجة واضحة', 'اكتب أصغر خطوة جاية في «' + title + '» واعملها']; }
+function goalToday(){ const g = ST().goal; if(!g) return ''; if(g.stepDate === today() && g.step) return g.step; const list = goalSuggestions(g.title); return list[pd(today()).getDate() % list.length]; }
+const goalDays = () => ST().goalDone || [];
+
+/* ---------- save-first fund ---------- */
+const fund = () => ST().fund || null;
+function fundSaved(){ const f = fund(); return (Number(f?.start) || 0) + D.tx.filter(t => t.kind === 'save').reduce((s, t) => s + egp(t), 0); }
+
+/* ---------- family moments & journal ---------- */
+const MOMENTS = [['kids','وقت مع يحيى وسيرين'],['wife','وقت مع مراتي'],['family','زيارة أهلي'],['grandma','كلمت جدتي']];
+function lastMoment(k){ let m = ''; for(const [d, arr] of Object.entries(ST().moments || {})) if(arr.includes(k) && d > m) m = d; return m; }
+const journal = () => ST().journal || {};
+
+/* ---------- weekly sit-down (Sunday) ---------- */
+function weekKey(d = today()){ const x = pd(d); return addDays(d, -x.getDay()); }
+function weekActive(){ const dow = pd(today()).getDay(); return dow <= 2 && !(ST().weeks || {})[weekKey()]?.done; }
+const weekPlan = () => (ST().weeks || {})[weekKey()] || null;
+
+/* ---------- month wrap ---------- */
+function wrapMonth(){ const d = pd(today()); if(d.getDate() >= 28) return today().slice(0, 7); if(d.getDate() <= 3){ const p = new Date(d.getFullYear(), d.getMonth() - 1, 1); return ymd(p).slice(0, 7); } return null; }
 
 /* ---------- tasks ---------- */
 const open = () => D.tasks.filter(t => t.status === 'open');
@@ -313,9 +370,9 @@ function probs(d){
 }
 const optH = (v, l, cur) => `<option value="${esc(v)}" ${String(v) === String(cur ?? '') ? 'selected' : ''}>${esc(l)}</option>`;
 function draftSum(d){
-  if(d.kind === 'task') return [d.title, [d.due ? dayLabel(d.due) : 'من غير معاد', timeLabel(d.time)].filter(Boolean).join(' · '), 'خطوة'];
+  if(d.kind === 'task') return [d.title, [d.due ? dayLabel(d.due) : 'من غير معاد', timeLabel(d.time)].filter(Boolean).join('، '), 'خطوة'];
   const name = d.kind === 'expense' ? CATS[d.cat]?.n || 'مصروف' : d.kind === 'income' ? INC[d.inc] || 'دخل' : 'حوّشت';
-  return [name, dayLabel(d.date) + (d.currency === 'USD' && d.rate ? ' · بسعر ' + nf2.format(d.rate) : ''), (d.kind === 'income' ? '+ ' : '') + (d.amount > 0 && d.currency ? money(d.amount, d.currency) : '؟')];
+  return [name, dayLabel(d.date) + (d.currency === 'USD' && d.rate ? '، بسعر ' + nf2.format(d.rate) : ''), (d.kind === 'income' ? '+ ' : '') + (d.amount > 0 && d.currency ? money(d.amount, d.currency) : '؟')];
 }
 function draftHTML(d, i){
   const p = probs(d); if(p.length || d.editId) d.open = true;
@@ -361,6 +418,8 @@ function saveDrafts(){
   save(); renderAll();
   if(list[0]?.editId){ toast('اتعدلت.', true); return; }
   toast(anyMoney ? pick(['اتسجلت، كده الصورة أوضح.', 'تمام، اتسجلت.', 'اتسجلت.']) : 'اتحطت في خطواتك.', true, true);
+  const inc = lastAdded.filter(([c]) => c === 'tx').map(([, id]) => D.tx.find(t => t.id === id)).filter(t => t && t.kind === 'income').reduce((s, t) => s + egp(t), 0);
+  if(inc > 0) setTimeout(() => offerSave(inc), 900);
 }
 const pick = a => a[Math.floor(Math.random() * a.length)];
 function handleText(text){ text = (text || '').trim(); if(!text) return; DR = parse(text).map(prep); showDrafts(); }
@@ -371,6 +430,15 @@ function quick(kind, cat){
   setTimeout(() => { const el = $(kind === 'task' ? '[data-f="title"]' : '[data-f="amount"]'); if(el) el.focus(); }, 80);
 }
 
+function offerSave(inc){
+  const f = fund(); const pct = Number(f?.pct) || 20;
+  const opts = [10, 20, 30].map(p => [p, Math.round(inc * p / 100 / 50) * 50]);
+  sheet(`<h2>حوّش الأول؟</h2><div class="muted">دخل ${money(inc)}. قبل ما يتصرف، نحط جزء جنب${f ? ' لـ «' + esc(f.name) + '»' : ''}.</div>
+  ${f ? '' : `<label class="f">اسم الصندوق<input class="in" id="fName" value="صندوق المدرسة"></label><label class="f">الهدف (رقم تخطيطي تقدر تغيّره بعدين)<input class="in" id="fTarget" inputmode="decimal" value="350000"></label>`}
+  <div class="chips">${opts.map(([p, v]) => `<button class="chip ${p === pct ? 'on' : ''}" type="button" data-act="saveFirst" data-v="${v}" data-p="${p}">${n0(p)}٪ = ${money(v)}</button>`).join('')}</div>
+  <div class="row"><input class="in" id="fOther" inputmode="decimal" placeholder="مبلغ تاني"><button class="kb main" type="button" data-act="saveFirst" data-v="other"><span>حوّش</span></button></div>
+  <button class="kb soft full" type="button" data-act="close">مش المرة دي</button>`);
+}
 /* ---------- sheet & toast ---------- */
 function sheet(html){ $('#sheet').innerHTML = '<div class="grab"></div>' + html; $('#veil').classList.add('open'); }
 function closeSheet(){ $('#veil').classList.remove('open'); $('#sheet').innerHTML = ''; }
@@ -399,12 +467,14 @@ function renderStep(){
   } else {
     const t = p.main;
     h += `<div class="title">${esc(t.title)}</div>
-      <div class="meta">${[t.parentTitle ? 'أول خطوة في: ' + esc(t.parentTitle) : '', t.time ? timeLabel(t.time) : '', t.essential ? 'ضرورية' : ''].filter(Boolean).join(' · ')}</div>
+      <div class="meta">${[t.parentTitle ? 'أول خطوة في: ' + esc(t.parentTitle) : '', t.time ? timeLabel(t.time) : '', t.essential ? 'ضرورية' : ''].filter(Boolean).join('، ')}</div>
       <button class="kb main full" type="button" data-act="done" data-id="${t.id}"><span>خلصت</span></button>
       <div class="btns"><button class="kb soft" type="button" data-act="later" data-id="${t.id}">بعدين</button><button class="kb soft" type="button" data-act="shrink" data-id="${t.id}">صغّرها</button></div>`;
     if(p.extras.length) h += `<div><div class="label">ولو فيه وقت</div>${p.extras.map(x => `<div class="line"><button class="tick" type="button" data-act="done" data-id="${x.id}" aria-label="خلصت ${esc(x.title)}"></button><span class="grow">${esc(x.title)}</span></div>`).join('')}</div>`;
   }
   if(busy) h += `<div class="note">يومك زحمة؟ خففنا الخطة للضروري بس.</div>`;
+  const wp = weekPlan(); if(wp && wp.familyDay === pd(today()).getDay()) h += `<div class="note">النهارده اليوم اللي اخترته للعيلة${wp.familyWhat ? ': ' + esc(wp.familyWhat) : ''}.</div>`;
+  else { const fo = ST().firstOpen; if(fo && daysBetween(fo, today()) >= 7){ for(const [k, l] of MOMENTS.slice(0, 2)){ const lm = lastMoment(k); const gap = lm ? daysBetween(lm, today()) : daysBetween(fo, today()); if(gap >= 7){ h += `<div class="note">${lm ? `آخر ${l} اتسجل من ${n0(gap)} ${gap <= 10 ? 'أيام' : 'يوم'}` : `لسه ماسجلتش ${l} في القفلة`}. تحطه في خطة بكرة؟</div>`; break; } } } }
   h += `<div class="chips" style="margin-top:auto">
     <button class="chip ${busy ? 'on' : ''}" type="button" data-act="busy"><span>${busy ? 'رجّع الخطة العادية' : 'يومي زحمة'}</span></button>
     ${p.overdue.length ? `<button class="chip" type="button" data-act="rearrange">نرتّبها من جديد (${n0(p.overdue.length)})</button>` : ''}
@@ -413,7 +483,7 @@ function renderStep(){
 }
 function renderMoney(){
   const m = monthNums(); const mn = MONTHS[new Date().getMonth()];
-  let h = `<span class="pill">فلوسي · ${mn}</span>`;
+  let h = `<span class="pill">فلوسي، ${mn}</span>`;
   if(m.inc > 0){
     h += `<div><div class="label">فاضل معاك الشهر ده</div><div class="huge">${n0(m.left)}<small>جنيه</small></div><div class="meta">على حسب اللي متسجل: الدخل ناقص اللي صرفته واللي حوّشته.</div></div>`;
     if(m.left < 0) h += `<div class="note">الصرف عدّى الدخل المتسجل بـ ${money(-m.left)}. لسه فيه دخل ماتسجلش؟</div>`;
@@ -423,7 +493,10 @@ function renderMoney(){
   if(top.length) h += `<div class="bars">${top.map(([c, v]) => `<div class="bar-row"><div class="row"><span class="grow">${esc(CATS[c]?.n || c)}</span><b>${n0(v)}</b></div><div class="bar"><i style="width:${Math.max(6, v / mx * 100)}%"></i></div></div>`).join('')}</div>`;
   const ll = lastLogged(); const gap = ll ? daysBetween(ll, today()) : 0;
   if(D.tx.length && gap >= 2) h += `<div class="note">عدّى ${gap === 2 ? 'يومين' : n0(gap) + ' أيام'} من غير تسجيل. لسه فيه حاجة اتصرفت وماتسجلتش؟</div>`;
-  h += `<div class="btns" style="margin-top:auto"><button class="kb soft" type="button" data-act="txList">الحركات</button><button class="kb soft" type="button" data-act="quickKind" data-k="income">سجّل دخل</button></div>`;
+  const f = fund();
+  if(f){ const sv = fundSaved(); const tg = Number(f.target) || 0; h += `<div class="fund"><div class="row"><b class="grow">${esc(f.name)}</b><span>${n0(sv)} من ${n0(tg)}</span></div><div class="bar"><i style="width:${tg ? Math.min(100, Math.max(3, sv / tg * 100)) : 0}%"></i></div><div class="meta">${tg > sv ? 'فاضل ' + money(tg - sv) + '.' : 'وصلت للهدف.'}${weekPlan()?.save ? ' خطة الأسبوع: ' + money(weekPlan().save) + '.' : ''}</div></div>`; }
+  else h += `<button class="chip" type="button" data-act="fundSetup" style="align-self:flex-start">حوّش الأول: اعمل صندوق للمدرسة</button>`;
+  h += `<div class="btns" style="margin-top:auto"><button class="kb soft" type="button" data-act="txList">الحركات</button><button class="kb soft" type="button" data-act="wrapSheet">ملخص الشهر</button></div>`;
   $('#money').innerHTML = h;
 }
 function renderLog(){
@@ -434,7 +507,7 @@ function renderLog(){
     <form data-form="say" style="display:flex;flex-direction:column;gap:10px"><textarea class="say" id="say" placeholder="دفعت ٨٠٠ بنزين و٣٢٠ غدا…" enterkeyhint="send">${esc(keep)}</textarea>
     <div class="btns">${SR ? `<button class="kb soft mic" type="button" id="mic" data-act="mic" aria-label="سجّل بالصوت"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>` : ''}<button class="kb main" type="submit"><span>كمّل</span></button></div></form>
     <div><div class="label" style="margin-bottom:8px">أو اختار بضغطة</div><div class="chips">${QUICK.map(([k, l]) => `<button class="chip" type="button" data-act="quickCat" data-c="${k}">${l}</button>`).join('')}<button class="chip" type="button" data-act="quickKind" data-k="income">دخل</button><button class="chip" type="button" data-act="quickKind" data-k="save">حوّشت</button><button class="chip" type="button" data-act="quickKind" data-k="task">خطوة</button></div></div>`;
-  if(last) h += `<div class="note" style="margin-top:auto">آخر حاجة: ${esc(draftSum(Object.assign({}, last, {inc: last.inc}))[0])} ${money(last.amount, last.currency)} · ${dayLabel(last.date)}</div>`;
+  if(last) h += `<div class="note" style="margin-top:auto">آخر حاجة: ${esc(draftSum(Object.assign({}, last, {inc: last.inc}))[0])} ${money(last.amount, last.currency)}، ${dayLabel(last.date)}</div>`;
   $('#log').innerHTML = h;
 }
 function renderClose(){
@@ -452,6 +525,8 @@ function renderClose(){
       ${list.length ? '' : '<button class="chip" type="button" data-act="zeroDay" style="align-self:flex-start">ماصرفتش حاجة النهارده</button>'}`;
   } else if(S.closeStep === 1){
     const p = plan(); const items = open().filter(x => x.due === t || x === p.main || p.extras.includes(x));
+    const mt = (ST().moments || {})[t] || [];
+    h += `<div><div class="label" style="margin-bottom:8px">عملت حاجة مع العيلة النهارده؟</div><div class="chips">${MOMENTS.map(([k, l]) => `<button class="chip ${mt.includes(k) ? 'on' : ''}" type="button" data-act="moment" data-k="${k}">${l}</button>`).join('')}</div></div>`;
     h += `<div class="title" style="font-size:1.4rem">خطوات النهارده</div>
       ${items.length ? `<div class="meta">اللي ماتعلّمش عليه هيفضل مفتوح.</div><div>${items.map(x => `<div class="line"><span class="grow">${esc(x.title)}</span><button class="chip" type="button" data-act="done" data-id="${x.id}">خلصت</button><button class="chip" type="button" data-act="later" data-id="${x.id}">بعدين</button></div>`).join('')}</div>` : '<div class="meta">مفيش خطوات مفتوحة للنهارده.</div>'}
       <div class="btns" style="margin-top:auto"><button class="kb soft" type="button" data-act="cstep" data-s="0">رجوع</button><button class="kb main" type="button" data-act="cstep" data-s="2"><span>التالي</span></button></div>`;
@@ -459,13 +534,67 @@ function renderClose(){
     const c = open().filter(x => !x.due || x.due <= addDays(t, 1)).sort((a, b) => score(a) - score(b)).slice(0, 5);
     h += `<div class="title" style="font-size:1.4rem">أهم خطوة بكرة؟</div>
       <div>${c.map(x => `<label class="line" style="cursor:pointer"><input type="radio" name="tm" value="${x.id}"><span class="grow">${esc(x.title)}</span></label>`).join('')}<label class="line" style="cursor:pointer"><input type="radio" name="tm" value="" checked><span class="grow" style="opacity:.75">أقرر الصبح</span></label></div>
+      <div><div class="label" style="margin-bottom:6px">يومك في جملة؟ (اختياري)</div><textarea class="say2" id="jline" placeholder="جملة واحدة عن النهارده…">${esc(journal()[t] || '')}</textarea></div>
       <div class="btns" style="margin-top:auto"><button class="kb soft" type="button" data-act="cstep" data-s="1">رجوع</button><button class="kb main" type="button" data-act="closeDay"><span>نقفل اليوم</span></button></div>`;
   }
   const days = [6, 5, 4, 3, 2, 1, 0].map(i => addDays(t, -i)); const n = days.filter(loggedDay).length;
   h += `<div style="margin-top:${closed ? 'auto' : '6px'}"><div class="label" style="margin-bottom:8px">${n === 7 ? 'أسبوع كامل متسجل. الصورة بقت أوضح بكتير.' : `اتسجل ${n0(n)} أيام من آخر ٧. اليوم اللي يفوت مش بيمسح اللي قبله.`}</div><div class="week">${days.map(d => `<span class="${loggedDay(d) ? 'on' : ''}">${'حنثرخجس'[pd(d).getDay()]}</span>`).join('')}</div></div>`;
   $('#close').innerHTML = h;
 }
-function renderAll(){ renderHeader(); renderStep(); renderMoney(); if(!($('#say') && document.activeElement === $('#say'))) renderLog(); renderClose(); markTab(); }
+function renderGoal(){
+  const g = ST().goal; const mk = today().slice(0, 7); let h = `<span class="pill">هدف الشهر، ${MONTHS[new Date().getMonth()]}</span>`;
+  if(!g || g.month !== mk){
+    h += `<div class="title">هدف واحد بس للشهر ده. الباقي يستنى دوره.</div>`;
+    if(g && g.title) h += `<button class="kb main full" type="button" data-act="goalSet" data-g="${esc(g.title)}"><span>نكمّل في «${esc(g.title)}»</span></button>`;
+    h += `<div class="chips">${GOALS.filter(x => x !== g?.title).map(x => `<button class="chip" type="button" data-act="goalSet" data-g="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+      <form data-form="goalCustom" class="row"><input class="in" id="goalCustom" placeholder="أو اكتب هدفك" style="background:rgba(255,255,255,.7);border-color:transparent"><button class="kb main" type="submit"><span>ده</span></button></form>`;
+    $('#goal').innerHTML = h; return;
+  }
+  const done = goalDays().includes(today()); const days = new Date(+mk.slice(0, 4), +mk.slice(5), 0).getDate(); const cnt = goalDays().filter(d => d.startsWith(mk)).length;
+  h += `<div class="title">${esc(g.title)}</div>
+    <div><div class="label">خطوة النهارده، ١٠ دقايق</div><div class="quote" style="margin-top:6px">${esc(goalToday())}</div></div>
+    ${done ? '<div class="note">اتعملت النهارده. خطوة صغيرة بتفرق.</div>' : `<button class="kb main full" type="button" data-act="goalDone"><span>عملتها</span></button>`}
+    <div class="btns"><button class="kb soft" type="button" data-act="goalStep">غيّر الخطوة</button>${done ? `<button class="kb soft" type="button" data-act="goalUndo">لسه ماعملتهاش</button>` : ''}</div>
+    <div><div class="label" style="margin-bottom:8px">${cnt ? `عملت ${plural(cnt, 'day')} الشهر ده.` : 'أول يوم هيبان هنا.'} اليوم اللي يفوت مش بيمسح اللي قبله.</div>
+    <div class="mdots">${Array.from({length: days}, (_, i) => { const d = mk + '-' + String(i + 1).padStart(2, '0'); return `<i class="${goalDays().includes(d) ? 'on' : ''} ${d === today() ? 'today' : ''}"></i>`; }).join('')}</div></div>
+    <button class="chip" type="button" data-act="goalChange" style="align-self:flex-start;margin-top:auto">غيّر هدف الشهر</button>`;
+  $('#goal').innerHTML = h;
+}
+function renderWeek(){
+  const el = $('#week'); if(!weekActive()){ el.hidden = true; el.innerHTML = ''; return; } el.hidden = false;
+  const lastStart = addDays(weekKey(), -7); const lastEnd = addDays(weekKey(), -1);
+  const spent = D.tx.filter(t => t.kind === 'expense' && t.date >= lastStart && t.date <= lastEnd).reduce((s, t) => s + egp(t), 0);
+  const stepsDone = D.tasks.filter(t => t.status === 'done' && t.doneAt && ymd(new Date(t.doneAt)) >= lastStart && ymd(new Date(t.doneAt)) <= lastEnd).length;
+  const gd = goalDays().filter(d => d >= lastStart && d <= lastEnd).length;
+  el.innerHTML = `<span class="pill">قعدة الأحد</span><div class="title" style="font-size:1.5rem">٣ دقايق نرتّب بيهم الأسبوع</div>
+    ${D.tx.length || D.tasks.length ? `<div class="meta">الأسبوع اللي فات: صرفت ${money(spent)}، وخلصت ${stepsDone ? plural(stepsDone, 'step') : 'صفر خطوات'}، وعملت هدف الشهر ${gd ? plural(gd, 'day') : 'صفر أيام'}.</div>` : ''}
+    <div><div class="label" style="margin-bottom:6px">١. أهم ٣ حاجات الأسبوع ده</div><div style="display:flex;flex-direction:column;gap:6px">${[0, 1, 2].map(i => `<input class="in" id="wk${i}" placeholder="${['أهم حاجة', 'التانية', 'التالتة'][i]}">`).join('')}</div></div>
+    <div><div class="label" style="margin-bottom:6px">٢. وقت العيلة يوم إيه؟</div><div class="chips" id="wkDays">${[5, 6, 0, 1, 2, 3, 4].map(d => `<button class="chip" type="button" data-act="wkDay" data-d="${d}">${DAYS[d]}</button>`).join('')}</div><input class="in" id="wkWhat" placeholder="هتعملوا إيه؟ (اختياري)" style="margin-top:6px"></div>
+    <div><div class="label" style="margin-bottom:6px">٣. هتحوّش كام الأسبوع ده؟</div><input class="in" id="wkSave" inputmode="decimal" placeholder="مثلًا ٢٠٠٠"></div>
+    <div class="btns"><button class="kb main" type="button" data-act="weekDone"><span>يلا بينا</span></button><button class="kb soft" type="button" data-act="weekSkip">مش الأسبوع ده</button></div>`;
+}
+function wrapHTML(mk){
+  const m = monthNums(mk); const top = Object.entries(m.cats).sort((a, b) => b[1] - a[1])[0];
+  const [y, mo] = mk.split('-').map(Number); const days = new Date(y, mo, 0).getDate();
+  let best = null; for(let start = 1; start <= days; start += 7){ let c = 0; for(let d = start; d < start + 7 && d <= days; d++) if(loggedDay(mk + '-' + String(d).padStart(2, '0'))) c++; if(!best || c > best[1]) best = [start, c]; }
+  const steps = D.tasks.filter(t => t.status === 'done' && t.doneAt && ymd(new Date(t.doneAt)).startsWith(mk)).length;
+  const gd = goalDays().filter(d => d.startsWith(mk)).length;
+  const mom = Object.entries(ST().moments || {}).filter(([d]) => d.startsWith(mk)).reduce((s, [, a]) => s + a.length, 0);
+  const js = Object.entries(journal()).filter(([d, t]) => d.startsWith(mk) && t).sort(); const q = js.length ? js[js.length - 1] : null;
+  const line = (k, v) => `<div class="wline"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+  return `<div class="title">${MONTHS[mo - 1]} بتاعك</div><div>
+    ${line('صرفت', money(m.out))}
+    ${top ? line('أكتر حاجة صرفت فيها', esc(CATS[top[0]]?.n || '') + '، ' + money(top[1])) : ''}
+    ${m.saved ? line('حوّشت', money(m.saved)) : ''}
+    ${best && best[1] ? line('أكتر أسبوع كنت ملتزم فيه', `من ${n0(best[0])} لـ ${n0(Math.min(days, best[0] + 6))} ${MONTHS[mo - 1]}، ${plural(best[1], 'day')} متسجلة`) : ''}
+    ${line('خطوات خلصتها', n0(steps))}
+    ${ST().goal?.month === mk ? line('هدف الشهر', esc(ST().goal.title) + '، ' + (gd ? plural(gd, 'day') : 'لسه')) : ''}
+    ${mom ? line('لحظات مع العيلة', n0(mom)) : ''}</div>
+    ${q ? `<div><div class="label" style="margin-bottom:6px">من يومياتك، ${dayLabel(q[0])}</div><div class="quote">«${esc(q[1])}»</div></div>` : ''}
+    ${js.length ? `<button class="kb soft full" type="button" data-act="diary" data-m="${mk}">يومياتك (${n0(js.length)})</button>` : ''}`;
+}
+function renderWrap(){ const el = $('#wrap'); const mk = wrapMonth(); if(!mk || !(D.tx.length || D.tasks.length)){ el.hidden = true; el.innerHTML = ''; return; } el.hidden = false; el.innerHTML = `<span class="pill">ملخص الشهر</span>` + wrapHTML(mk); }
+function renderAll(){ renderHeader(); renderWeek(); renderWrap(); renderStep(); renderGoal(); renderMoney(); if(!($('#say') && document.activeElement === $('#say'))) renderLog(); renderClose(); markTab(); }
 function markTab(){ $$('.tab').forEach(b => b.classList.toggle('on', b.dataset.to === S.active)); }
 function goto(id, smooth = true){ const el = document.getElementById(id); if(!el) return; S.active = id; markTab(); el.scrollIntoView({behavior: smooth ? 'smooth' : 'auto', inline:'center', block:'nearest'}); }
 
@@ -499,7 +628,7 @@ const A = {
     sheet(`<h2>نرتّبها من جديد</h2><div class="muted small">اختار لكل واحدة وقت يناسب، واللي مش مهمة شيلها.</div>${od.map(t => `<div class="draft"><b>${esc(t.title)}</b><div class="chips"><button class="chip" type="button" data-act="ra" data-id="${t.id}" data-d="0">النهارده</button><button class="chip" type="button" data-act="ra" data-id="${t.id}" data-d="1">بكرة</button><button class="chip" type="button" data-act="ra" data-id="${t.id}" data-d="7">الأسبوع الجاي</button><button class="chip" type="button" data-act="ra" data-id="${t.id}" data-d="none">من غير معاد</button><button class="chip" type="button" data-act="ra" data-id="${t.id}" data-d="drop">شيلها</button></div></div>`).join('')}`); },
   ra(el){ const t = D.tasks.find(x => x.id === el.dataset.id); if(!t) return; const d = el.dataset.d; if(d === 'drop') t.status = 'dropped'; else t.due = d === 'none' ? null : addDays(today(), +d); save(); renderAll(); A.rearrange(); },
   allSteps(){ const o = open().sort((a, b) => (a.due || '9').localeCompare(b.due || '9'));
-    sheet(`<h2>كل خطواتي</h2>${o.map(t => `<div class="line"><button class="tick" type="button" data-act="done" data-id="${t.id}" aria-label="خلصت"></button><div class="grow"><div>${esc(t.title)}</div><div class="small muted">${dayLabel(t.due)}${t.time ? ' · ' + timeLabel(t.time) : ''}</div></div><button class="chip" type="button" data-act="makeMain" data-id="${t.id}">النهارده</button><button class="chip" type="button" data-act="taskEdit" data-id="${t.id}">…</button></div>`).join('') || '<div class="muted">مفيش خطوات مفتوحة.</div>'}
+    sheet(`<h2>كل خطواتي</h2>${o.map(t => `<div class="line"><button class="tick" type="button" data-act="done" data-id="${t.id}" aria-label="خلصت"></button><div class="grow"><div>${esc(t.title)}</div><div class="small muted">${dayLabel(t.due)}${t.time ? '، ' + timeLabel(t.time) : ''}</div></div><button class="chip" type="button" data-act="makeMain" data-id="${t.id}">النهارده</button><button class="chip" type="button" data-act="taskEdit" data-id="${t.id}">…</button></div>`).join('') || '<div class="muted">مفيش خطوات مفتوحة.</div>'}
     <button class="kb soft full" type="button" data-act="quickKind" data-k="task">ضيف خطوة</button>`); },
   makeMain(el){ const t = D.tasks.find(x => x.id === el.dataset.id); if(!t) return; if(t.due && t.due > today()) t.due = today(); setS({todayMain: {date: today(), id: t.id}}); closeSheet(); renderAll(); goto('step'); },
   taskEdit(el){ const t = D.tasks.find(x => x.id === el.dataset.id); if(!t) return;
@@ -508,12 +637,12 @@ const A = {
   teSave(el){ const t = D.tasks.find(x => x.id === el.dataset.id); const v = $('#teT').value.trim(); if(!t || !v) return; Object.assign(t, {title: v, due: $('#teD').value || null, time: $('#teH').value || null, essential: $('#teE').checked}); save(); closeSheet(); renderAll(); toast('اتعدلت.'); },
   teDel(el){ if(el.dataset.sure !== '1'){ el.dataset.sure = '1'; el.textContent = 'متأكد؟'; return; } D.tasks = D.tasks.filter(x => x.id !== el.dataset.id); save(); closeSheet(); renderAll(); },
   txList(){ const mk = today().slice(0, 7); const list = D.tx.filter(t => t.date.slice(0, 7) === mk).sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt));
-    sheet(`<h2>حركات ${MONTHS[new Date().getMonth()]}</h2>${list.map(t => { const [a] = draftSum(t); return `<button class="line" type="button" data-act="txEdit" data-id="${t.id}" style="background:none;border:0;border-bottom:1px solid var(--line);width:100%;text-align:start"><div class="grow"><div>${esc(a)}${t.note ? ' · ' + esc(t.note) : ''}</div><div class="small muted">${dayLabel(t.date)}</div></div><b>${t.kind === 'income' ? '+ ' : ''}${money(t.amount, t.currency)}</b></button>`; }).join('') || '<div class="muted">لسه مفيش حركات الشهر ده.</div>'}`); },
+    sheet(`<h2>حركات ${MONTHS[new Date().getMonth()]}</h2>${list.map(t => { const [a] = draftSum(t); return `<button class="line" type="button" data-act="txEdit" data-id="${t.id}" style="background:none;border:0;border-bottom:1px solid var(--line);width:100%;text-align:start"><div class="grow"><div>${esc(a)}${t.note ? '، ' + esc(t.note) : ''}</div><div class="small muted">${dayLabel(t.date)}</div></div><b>${t.kind === 'income' ? '+ ' : ''}${money(t.amount, t.currency)}</b></button>`; }).join('') || '<div class="muted">لسه مفيش حركات الشهر ده.</div>'}`); },
   txEdit(el){ const t = D.tx.find(x => x.id === el.dataset.id); if(!t) return; DR = [Object.assign({}, t, {editId: t.id, open: true})]; showDrafts(); },
   txDel(el){ if(el.dataset.sure !== '1'){ el.dataset.sure = '1'; el.textContent = 'متأكد؟ امسح'; return; } D.tx = D.tx.filter(x => x.id !== el.dataset.id); DR = []; save(); closeSheet(); renderAll(); toast('اتمسحت.'); },
   cstep(el){ S.closeStep = +el.dataset.s; renderClose(); },
   zeroDay(){ setS({zeroDays: [...(ST().zeroDays || []), today()].slice(-60)}); S.closeStep = 1; renderAll(); },
-  closeDay(){ const v = $('input[name="tm"]:checked')?.value || ''; setS({closedDays: [...(ST().closedDays || []), today()].slice(-60), tomorrowMain: v ? {date: addDays(today(), 1), id: v} : null}); S.closeStep = 0; renderAll(); toast('اليوم اتقفل. تصبح على خير.', true); },
+  closeDay(){ const jl = ($('#jline')?.value || '').trim(); if(jl) setS({journal: Object.assign({}, journal(), {[today()]: jl.slice(0, 280)})}); const v = $('input[name="tm"]:checked')?.value || ''; setS({closedDays: [...(ST().closedDays || []), today()].slice(-60), tomorrowMain: v ? {date: addDays(today(), 1), id: v} : null}); S.closeStep = 0; renderAll(); toast('اليوم اتقفل. تصبح على خير.', true); },
   reopen(){ setS({closedDays: (ST().closedDays || []).filter(d => d !== today())}); renderAll(); },
   settings(){ const st = ST();
     sheet(`<h2>الإعدادات</h2>
@@ -530,6 +659,35 @@ const A = {
   importData(){ $('#importFile').click(); },
   wipe(el){ if(el.dataset.sure !== '1'){ el.dataset.sure = '1'; el.textContent = 'متأكد؟ مفيش رجوع'; return; } D = {settings:{name: ST().name}, tx:[], tasks:[]}; save(); closeSheet(); renderAll(); toast('اتمسح كل حاجة.'); },
   mic(){ toggleMic(); },
+  goalSet(el){ setS({goal: {title: el.dataset.g, month: today().slice(0, 7)}}); renderAll(); goto('goal'); toast('هدف الشهر اتحدد.', true); },
+  goalChange(){ setS({goal: Object.assign({}, ST().goal, {month: ''})}); renderAll(); },
+  goalDone(){ setS({goalDone: [...goalDays().filter(d => d !== today()), today()].slice(-400)}); renderAll(); toast(pick(['عملتها. خطوة صغيرة بتفرق.', 'حلو. يوم كمان في الهدف.', 'تمام. كده ماشي.']), true); },
+  goalUndo(){ setS({goalDone: goalDays().filter(d => d !== today())}); renderAll(); },
+  goalStep(){ const g = ST().goal; if(!g) return; sheet(`<h2>خطوة النهارده في «${esc(g.title)}»</h2><div class="muted small">١٠ دقايق ونتيجتها واضحة. ولو تنفع جوه شغل حقيقي يبقى أحسن.</div>
+    <div class="chips">${goalSuggestions(g.title).map(x => `<button class="chip" type="button" data-act="goalStepSet" data-s="${esc(x)}" style="text-align:start">${esc(x)}</button>`).join('')}</div>
+    <form data-form="goalStepCustom" class="row"><input class="in" id="gsc" placeholder="أو اكتب خطوتك"><button class="kb main" type="submit"><span>دي</span></button></form>`); },
+  goalStepSet(el){ setS({goal: Object.assign({}, ST().goal, {step: el.dataset.s, stepDate: today()})}); closeSheet(); renderAll(); },
+  fundSetup(){ sheet(`<h2>صندوق «حوّش الأول»</h2><div class="muted small">كل ما تسجل دخل هقترح عليك تحط جزء هنا قبل ما يتصرف. التحويل للصندوق مش بيتحسب صرف.</div>
+    <label class="f">اسم الصندوق<input class="in" id="fName" value="${esc(fund()?.name || 'صندوق المدرسة')}"></label>
+    <label class="f">الهدف (رقم تخطيطي تقدر تغيّره)<input class="in" id="fTarget" inputmode="decimal" value="${fund()?.target || 350000}"></label>
+    <label class="f">محوّش فيه قبل كده كام؟<input class="in" id="fStart" inputmode="decimal" value="${fund()?.start || ''}" placeholder="٠"></label>
+    <label class="f">النسبة اللي أقترحها من كل دخل<input class="in" id="fPct" inputmode="decimal" value="${fund()?.pct || 20}"></label>
+    <button class="kb main full" type="button" data-act="fundSave"><span>احفظ</span></button>`); },
+  fundSave(){ setS({fund: {name: $('#fName').value.trim() || 'صندوق المدرسة', target: numIn($('#fTarget').value) || 0, start: numIn($('#fStart').value) || 0, pct: numIn($('#fPct').value) || 20}}); closeSheet(); renderAll(); goto('money'); toast('الصندوق جاهز.', true); },
+  saveFirst(el){ let v = el.dataset.v === 'other' ? numIn($('#fOther').value) : Number(el.dataset.v); if(!(v > 0)) return;
+    if(!fund()) setS({fund: {name: ($('#fName')?.value || 'صندوق المدرسة').trim(), target: numIn($('#fTarget')?.value) || 350000, start: 0, pct: Number(el.dataset.p) || 20}});
+    else if(el.dataset.p) setS({fund: Object.assign({}, fund(), {pct: Number(el.dataset.p)})});
+    D.tx.push({id: uid(), kind:'save', amount: r2(v), currency:'EGP', date: today(), note: fund().name, createdAt: Date.now()}); save(); closeSheet(); renderAll(); toast(`حوّشت ${money(v)}. قربت من «${fund().name}».`, true); },
+  wkDay(el){ $$('#wkDays .chip').forEach(c => c.classList.toggle('on', c === el && !el.classList.contains('on'))); },
+  weekDone(){ const top = [0, 1, 2].map(i => $('#wk' + i).value.trim()).filter(Boolean); const ids = [];
+    for(const tt of top){ const t = {id: uid(), title: tt, due: null, status:'open', postponed:0, week: weekKey(), createdAt: Date.now()}; D.tasks.push(t); ids.push(t.id); }
+    const dayEl = $('#wkDays .chip.on'); const plan = {done: true, top: ids, familyDay: dayEl ? Number(dayEl.dataset.d) : null, familyWhat: $('#wkWhat').value.trim(), save: numIn($('#wkSave').value) || 0};
+    setS({weeks: Object.assign({}, ST().weeks || {}, {[weekKey()]: plan})}); renderAll(); goto('step'); toast('الأسبوع اترتّب. يلا بينا.', true); },
+  weekSkip(){ setS({weeks: Object.assign({}, ST().weeks || {}, {[weekKey()]: {done: true, skipped: true}})}); renderAll(); goto('step'); },
+  moment(el){ const t = today(); const all = Object.assign({}, ST().moments || {}); const cur = new Set(all[t] || []); cur.has(el.dataset.k) ? cur.delete(el.dataset.k) : cur.add(el.dataset.k); all[t] = [...cur]; setS({moments: all}); renderClose(); },
+  wrapSheet(){ const mk = wrapMonth() || today().slice(0, 7); sheet(`<div class="card c-wrap" style="flex:none;overflow:visible">${wrapHTML(mk)}</div>`); },
+  diary(el){ const mk = el.dataset.m; const js = Object.entries(journal()).filter(([d, t]) => d.startsWith(mk) && t).sort().reverse();
+    sheet(`<h2>يومياتك</h2>${js.map(([d, t]) => `<div class="line" style="flex-direction:column;align-items:flex-start;gap:2px"><span class="small muted">${dayLabel(d)}</span><span>${esc(t)}</span></div>`).join('')}`); },
 };
 function mostUsed(){ const c = {}; D.tx.filter(t => t.kind === 'expense' && t.date >= addDays(today(), -30)).forEach(t => c[t.cat] = (c[t.cat] || 0) + 1); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || 'food'; }
 
@@ -554,6 +712,8 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeSheet();
 document.addEventListener('submit', e => {
   e.preventDefault(); const f = e.target.dataset.form;
   if(f === 'say'){ const v = $('#say').value; if(rec) rec.stop(); if(!v.trim()) return; $('#say').value = ''; $('#say').blur(); handleText(v); }
+  if(f === 'goalCustom'){ const v = $('#goalCustom').value.trim(); if(v){ setS({goal: {title: v, month: today().slice(0, 7)}}); renderAll(); toast('هدف الشهر اتحدد.', true); } return; }
+  if(f === 'goalStepCustom'){ const v = $('#gsc').value.trim(); if(v){ setS({goal: Object.assign({}, ST().goal, {step: v, stepDate: today()})}); closeSheet(); renderAll(); } return; }
   if(f === 'newStep'){ const v = $('#newStep').value.trim(); if(!v) return; const t = {id: uid(), title: v, due: today(), status:'open', postponed:0, createdAt: Date.now()}; D.tasks.push(t); setS({todayMain: {date: today(), id: t.id}}); renderAll(); toast('دي خطوة النهارده.', true); }
 });
 document.addEventListener('keydown', e => { if(e.target.id === 'say' && e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); e.target.form.requestSubmit(); } });
@@ -577,16 +737,19 @@ $('#importFile').addEventListener('change', async e => {
 const io = new IntersectionObserver(es => { es.forEach(en => { if(en.isIntersecting && en.intersectionRatio > .6){ S.active = en.target.id; markTab(); } }); }, {root: $('#deck'), threshold: [.6]});
 $$('.card').forEach(c => io.observe(c));
 document.addEventListener('visibilitychange', () => { if(!document.hidden){ renderAll(); } });
-window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if(['step', 'money', 'log', 'close'].includes(h)) goto(h); });
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if(['step', 'goal', 'money', 'log', 'close'].includes(h)) goto(h); });
 
 (function boot(){
   load();
   try { const seen = sessionStorage.getItem('khatwa_greet'); S.withName = seen !== today(); sessionStorage.setItem('khatwa_greet', today()); } catch(e){}
-  const t = today(); const lo = ST().lastOpen; if(lo && lo !== t){ const g = daysBetween(lo, t); if(g >= 3) S.welcome = g; } if(lo !== t) setS({lastOpen: t});
+  const t = today(); const lo = ST().lastOpen; if(lo && lo !== t){ const g = daysBetween(lo, t); if(g >= 3) S.welcome = g; } if(lo !== t) setS({lastOpen: t}); if(!ST().firstOpen) setS({firstOpen: t});
   renderAll();
   // open straight on what fits: a shortcut if one was used, the day's close in the evening, otherwise today's step
   const h = location.hash.slice(1); const hr = new Date().getHours();
-  const start = ['step', 'money', 'log', 'close'].includes(h) ? h : (hr >= 20 || hr < 3) && !(ST().closedDays || []).includes(t) ? 'close' : 'step';
+  const wm = wrapMonth(); const seen = ST().wrapSeen || [];
+  let start = ['step', 'goal', 'money', 'log', 'close'].includes(h) ? h : (hr >= 20 || hr < 3) && !(ST().closedDays || []).includes(t) ? 'close' : 'step';
+  if(!h && weekActive() && hr < 20) start = 'week';
+  else if(!h && wm && !seen.includes(wm) && !$('#wrap').hidden){ start = 'wrap'; setS({wrapSeen: [...seen, wm].slice(-24)}); }
   requestAnimationFrame(() => { goto(start, false); if(start === 'log') setTimeout(() => $('#say')?.focus(), 300); });
   if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   if('serviceWorker' in navigator && location.protocol === 'https:') Promise.reject().catch(() => {});
